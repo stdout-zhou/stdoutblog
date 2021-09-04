@@ -7,6 +7,8 @@ from sqlalchemy.sql.functions import now
 from sqlalchemy.sql.schema import Column
 from sqlalchemy.types import BOOLEAN, VARCHAR
 
+from stdout_blog_backend.dao.mysql.database import database
+
 
 class UserInfo(object):
     user_id = Column(VARCHAR(13), nullable=False, unique=True)
@@ -22,5 +24,15 @@ class UserInfo(object):
         cls.nick_name = nick_name
         cls.is_active = is_active
         instance = cls
+        database.add(instance)
+        if commit:
+            database.commit()
+        return instance
+
+    @classmethod
+    def get_one_by_id(cls, user_id, for_update=False):
+        return database.get_one(cls, user_id, for_update=for_update)
+
+
 
 
